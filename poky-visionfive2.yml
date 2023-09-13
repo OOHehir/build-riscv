@@ -8,7 +8,7 @@ target:
 
 repos:
   meta-riscv:
-    url: https://github.com/OOHehir/meta-riscv
+    url: https://github.com/riscv/meta-riscv
     path: layers/meta-riscv
     refspec: master
 
@@ -60,6 +60,9 @@ local_conf_header:
 
     # Only required for testing
     DISTRO_FEATURES:remove = "ptest"
+    
+    # Test
+    # DISTRO_FEATURES += "systemd"
 
   debug-tweaks: |
     EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh"
