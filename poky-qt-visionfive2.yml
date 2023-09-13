@@ -1,0 +1,81 @@
+header:
+  version: 8
+
+machine: visionfive2
+distro: poky
+target:
+  - core-image-base
+
+repos:
+  meta-riscv:
+    url: https://github.com/riscv/meta-riscv
+    path: layers/meta-riscv
+    refspec: master
+
+  poky:
+    url: https://git.yoctoproject.org/git/poky
+    path: layers/poky
+    refspec: master
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: http://git.openembedded.org/meta-openembedded
+    path: layers/meta-openembedded
+    refspec: master
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-perl:
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+local_conf_header:
+  reduce_diskspace: |
+    INHERIT += "rm_work_and_downloads"
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+
+    # Image types (quicker to flash with)
+    IMAGE_FSTYPES = "wic wic.gz"
+
+    # Added - you probably want to changes these next two lines!
+    DL_DIR = "/home/projects/yocto/localCache/downloads"
+    SSTATE_DIR = "/home/projects/yocto/localCache/sstate-cache"
+    
+    BB_SIGNATURE_HANDLER = "OEEquivHash"
+    BB_HASHSERVE = "auto"
+    BB_HASHSERVE_UPSTREAM = "hashserv.yocto.io:8687"
+    SSTATE_MIRRORS ?= "file://.* https://sstate.yoctoproject.org/all/PATH;downloadfilename=PATH"
+
+    # Only required for testing
+    DISTRO_FEATURES:remove = "ptest"
+    
+    # Test
+    # DISTRO_FEATURES += "systemd"
+
+  debug-tweaks: |
+    EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh"
+
+  diskmon: |
+    BB_DISKMON_DIRS = "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"
+
+
