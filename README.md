@@ -9,3 +9,6 @@ kas
 git-lfs
 
 
+## Misc tasks
+
+kas shell poky-qt-visionfive2.yml -c 'bitbake -v qt6'

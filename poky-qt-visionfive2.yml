@@ -30,6 +30,18 @@ repos:
       meta-python:
       meta-networking:
       meta-perl:
+      
+  meta-qt6:
+    url: https://code.qt.io/yocto/meta-qt6.git
+    path: layers/meta-qt6    
+    #Unstable 'alpha' development branch
+    refspec: dev
+    
+  meta-test-riscv:
+    # Warning, doesn't update!
+    url: https://github.com/OOHehir/meta-test-riscv.git
+    path: layers/meta-test-riscv
+    refspec: main
 
 bblayers_conf_header:
   standard: |
@@ -60,9 +72,29 @@ local_conf_header:
 
     # Only required for testing
     DISTRO_FEATURES:remove = "ptest"
-    
-    # Test
-    # DISTRO_FEATURES += "systemd"
+
+    # Include Qt6 toolchain when making SDK   
+    TOOLCHAIN_HOST_TASK += " nativesdk-packagegroup-qt6-toolchain-host \
+                            "
+
+  qt-specific: |
+      # Use VC4 driver EGLFS
+      IMAGE_INSTALL:remove = "wayland weston weston-init"
+      DISTRO_FEATURES:remove = "x11"
+
+      # Doesn't resolve the message: 'Qt depends on a UTF-8 locale, but has failed to switch to one.'
+      GLIBC_GENERATE_LOCALES = "en_GB en_US en_GB.UTF-8 en_US.UTF-8"
+      IMAGE_LINGUAS = "en-gb en-us"
+
+      # No fonts available on QML apps without adding this 
+      IMAGE_INSTALL:append = "\
+            ttf-dejavu-sans \
+            ttf-dejavu-sans-mono \
+            ttf-dejavu-sans-condensed \
+            ttf-dejavu-serif \
+            ttf-dejavu-serif-condensed \
+            ttf-dejavu-common \
+            "
 
   debug-tweaks: |
     EXTRA_IMAGE_FEATURES = "debug-tweaks ssh-server-openssh"
