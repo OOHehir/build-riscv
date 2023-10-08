@@ -11,7 +11,7 @@ repos:
     url: https://github.com/riscv/meta-riscv
     path: layers/meta-riscv
     refspec: master
-
+    
   poky:
     url: https://git.yoctoproject.org/git/poky
     path: layers/poky
@@ -20,7 +20,7 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
-
+    
   meta-openembedded:
     url: http://git.openembedded.org/meta-openembedded
     path: layers/meta-openembedded
@@ -81,6 +81,7 @@ local_conf_header:
       # Use VC4 driver EGLFS
       IMAGE_INSTALL:remove = "wayland weston weston-init"
       DISTRO_FEATURES:remove = "x11"
+      TUNE_ARCH = "rv64imafdc_zicsr_zifencei_zihintpause"
 
       # Doesn't resolve the message: 'Qt depends on a UTF-8 locale, but has failed to switch to one.'
       GLIBC_GENERATE_LOCALES = "en_GB en_US en_GB.UTF-8 en_US.UTF-8"
